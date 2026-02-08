@@ -16,8 +16,9 @@ public class Main {
         System.out.printf("%s is evens without odd sons\n", all(t2) ? "all of the tree " : "not all the tree");
         System.out.printf("%s a balanced tree\n", isBalanced(t) ? "is" : "is not");
         System.out.printf("tree height is : %s\n", height(t));
-        System.out.printf("ex_20: %s",ex_20(t,20));
-
+        System.out.printf("ex_20: %s\n",ex_20(t,20));
+        System.out.printf("ex_26:%s a perfect tree\n",perfectTree(t3) ? "is" : "is not");
+        System.out.printf("ex_23: %s\n",ex_23(t2));
     }
 
     public static BinNode<Integer> createSampleTree() {
@@ -232,6 +233,8 @@ public class Main {
         return 1+nodec(t.getLeft())+nodec(t.getRight());
     }
     public static boolean ex_20(BinNode<Integer> t,int n){
+        if(n!=nodec(t))
+            return false;
         for(int i=1;i<=n;i++){
             if(countisIn(t, i)!=1)
                 return false;
@@ -246,4 +249,13 @@ public class Main {
             c=1;
         return c+countisIn(t.getLeft(), num) + countisIn(t.getRight(), num);
     }
+    public static boolean perfectTree(BinNode<Integer> t){
+        return nodec(t)==Math.pow(2, height(t));
+    }
+    public static int ex_23(BinNode<Integer> t){
+        if(t==null)
+            return Integer.MIN_VALUE;
+        return Math.max(t.getValue(), Math.max(ex_23(t.getRight()),ex_23(t.getLeft())));
+    }
+    
 }
