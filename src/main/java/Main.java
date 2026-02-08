@@ -18,18 +18,21 @@ public class Main {
         System.out.printf("tree height is : %s\n", height(t));
         System.out.printf("ex_20: %s\n",ex_20(t,20));
         System.out.printf("ex_26:%s a perfect tree\n",perfectTree(t3) ? "is" : "is not");
-        System.out.printf("ex_23: %s\n",ex_23(t2));
+        System.out.printf("ex_23:max value is %s\n",ex_23(t2));
+        System.out.printf("ex_23:min value is %s\n",ex_23_b(t2));
+        System.out.printf("ex_22:%s son perfect tree\n",ex_22(t) ? "is" : "is not");
     }
 
     public static BinNode<Integer> createSampleTree() {
         // 1. Create the bottom-most layer (Level 4)
         BinNode<Integer> deepLeaf1 = new BinNode<>(1); // Child for 2
+        BinNode<Integer> deepLeaf8 = new BinNode<>(7); // Child for 2
         BinNode<Integer> deepLeaf2 = new BinNode<>(6); // Left child for 7
         BinNode<Integer> deepLeaf3 = new BinNode<>(8); // Right child for 7
 
         // 2. Create the middle layer (Level 3)
         // Node 2: Has '1' as left child, no right child
-        BinNode<Integer> node2 = new BinNode<>(deepLeaf1, 2, null);
+        BinNode<Integer> node2 = new BinNode<>(deepLeaf1, 2, deepLeaf8);
 
         // Node 7: Has '6' and '8' as children
         BinNode<Integer> node7 = new BinNode<>(deepLeaf2, 7, deepLeaf3);
@@ -257,5 +260,164 @@ public class Main {
             return Integer.MIN_VALUE;
         return Math.max(t.getValue(), Math.max(ex_23(t.getRight()),ex_23(t.getLeft())));
     }
-    
+    public static int ex_23_b(BinNode<Integer> t){
+        if(t==null)
+            return Integer.MAX_VALUE;
+        return Math.min(t.getValue(), Math.min(ex_23_b(t.getRight()),ex_23_b(t.getLeft())));
+    }
+    public static boolean ex_22(BinNode<Integer> t){
+        if(t==null)
+            return true;
+        if(t.hasLeft() != t.hasRight())
+            return false;
+        return ex_22(t.getRight()) && ex_22(t.getLeft());
+    }
+    public static <T> void ex1And2(BinNode<T> t) {
+		if (t == null)
+			return;
+		Queue<BinNode<T>> q = new Queue<BinNode<T>>();
+		q.insert(t);
+		int curr = 1;
+		int next = 0;
+		while (!q.isEmpty()) {
+			BinNode<T> n = q.remove();
+			System.out.print(n.getValue());
+			curr--;
+			if (n.hasLeft()) {
+				q.insert(n.getLeft());
+				next++;
+			}
+			if (n.hasRight()) {
+				q.insert(n.getRight());
+				next++;
+			}
+			if (curr > 0)
+				System.out.print(" ");
+			else {
+				System.out.println();
+				curr = next;
+				next = 0;
+			}
+		}
+	}
+ 
+	public static <T> void ex3(BinNode<T> t) {
+		if (t == null)
+			return;
+		Queue<BinNode<T>> q = new Queue<BinNode<T>>();
+		q.insert(t);
+		int curr = 1;
+		int next = 0;
+		while (!q.isEmpty()) {
+			BinNode<T> n = q.remove();
+			System.out.print(n.getValue());
+			curr--;
+			if (n.hasRight()) {
+				q.insert(n.getRight());
+				next++;
+			}
+			if (curr > 0)
+				System.out.print(" ");
+			else {
+				System.out.println();
+				curr = next;
+				next = 0;
+			}
+		}
+	}
+ 
+	public static <T> Node<T> ex4(BinNode<T> t) {
+		Node<T> head = null;
+		Node<T> tail = null;
+		if (t == null)
+			return head;
+		Queue<BinNode<T>> q = new Queue<BinNode<T>>();
+		q.insert(t);
+		int curr = 1;
+		int next = 0;
+		while (!q.isEmpty()) {
+			BinNode<T> n = q.remove();
+			curr--;
+			if (n.hasRight()) {
+				q.insert(n.getRight());
+				next++;
+			}
+			if (curr == 0) {
+				Node<T> newNode = new Node<T>(n.getValue());
+				if (head == null) {
+					head = newNode;
+					tail = newNode;
+				} else {
+					tail.setNext(newNode);
+					tail = newNode;
+				}
+				curr = next;
+				next = 0;
+			}
+		}
+		return head;
+	}
+ 
+	public static <T> Node<T> ex5(BinNode<T> t) {
+		Node<T> head = null;
+		Node<T> tail = null;
+		if (t == null)
+			return head;
+ 
+		Queue<BinNode<T>> q = new Queue<BinNode<T>>();
+		q.insert(t);
+		int curr = 1;
+		int next = 0;
+		boolean leftToRight = true;
+		Node<T> tempStack = null;
+ 
+		while (!q.isEmpty()) {
+			BinNode<T> n = q.remove();
+			curr--;
+ 
+			if (leftToRight) {
+				Node<T> newNode = new Node<T>(n.getValue());
+				if (head == null) {
+					head = newNode;
+					tail = newNode;
+				} else {
+					tail.setNext(newNode);
+					tail = newNode;
+				}
+			} else {
+				Node<T> push = new Node<T>(n.getValue());
+				push.setNext(tempStack);
+				tempStack = push;
+			}
+ 
+			if (n.hasLeft()) {
+				q.insert(n.getLeft());
+				next++;
+			}
+			if (n.hasRight()) {
+				q.insert(n.getRight());
+				next++;
+			}
+ 
+			if (curr == 0) {
+				while (tempStack != null) {
+					Node<T> pop = tempStack;
+					tempStack = tempStack.getNext();
+					Node<T> newNode = new Node<T>(pop.getValue());
+					if (head == null) {
+						head = newNode;
+						tail = newNode;
+					} else {
+						tail.setNext(newNode);
+						tail = newNode;
+					}
+				}
+				leftToRight = !leftToRight;
+				curr = next;
+				next = 0;
+				tempStack = null;
+			}
+		}
+		return head;
+	}
 }
